@@ -101,6 +101,7 @@ public class Application {
     }
 
     private static boolean parseArguments(String[] args) {
+        boolean hasOtherArguments = false;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (StringUtils.equals(arg, "--daemon")) {
@@ -109,6 +110,8 @@ public class Application {
                 argInputUri = args[++i];
             } else if (StringUtils.equals(arg, "--output")) {
                 argOutputUri = args[++i];
+            } else {
+                hasOtherArguments = true;
             }
         }
 
@@ -117,6 +120,9 @@ public class Application {
             return true;
         } else if (!isDaemon && StringUtils.isNotEmpty(argInputUri) && StringUtils.isNotEmpty(argOutputUri)) {
             log.debug("No Daemon parameters okay");
+            return true;
+        } else if (!isDaemon && StringUtils.isEmpty(argInputUri) && StringUtils.isEmpty(argOutputUri) && hasOtherArguments) {
+            log.debug("No input and output specified. Parameters will be passed to plugin parsers.");
             return true;
         } else {
             log.debug("Application parameter not okay");
